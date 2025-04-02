@@ -1,5 +1,5 @@
 // API Key
-const API_KEY = '6ceaa997fceff289c51878e14a66a48b';
+const API_KEY = 'WEATHER_API_KEY';
 
 // DOM Elements - Weather Details
 let cityName = document.querySelector('.weather_city');
