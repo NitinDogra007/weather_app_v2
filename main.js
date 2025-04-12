@@ -67,34 +67,27 @@ citySearch.addEventListener('submit', (e) => {
 
 async function getWeatherData() {
 	try {
-		const response = await fetch(
-			`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`
-		);
+		const response = await fetch(`/.netlify/functions/getWeather?city=${city}`);
 		const data = await response.json();
 
-		// Check if the API response is not OK (e.g., invalid city)
 		if (!response.ok) {
-			throw new Error('City not found. Please try again.');
+			throw new Error(data.error || 'Failed to fetch weather data.');
 		}
 
-		// Destructure data
+		// Destructure and update DOM (same as before)
 		const {
 			name,
-			main: { temp, temp_min, temp_max, feels_like, pressure, humidity }, // Nested destructuring
-			weather: [{ main, icon }], // Destructuring from an array
-			wind: { speed }, // Nested destructuring
+			main: { temp, temp_min, temp_max, feels_like, pressure, humidity },
+			weather: [{ main, icon }],
+			wind: { speed },
 			sys: { country },
 			dt,
 		} = data;
 
-		// Update DOM with fetched data
 		cityName.innerHTML = `${name} ${getCountryName(country)}`;
 		dateTime.innerHTML = getDateTime(dt);
 		w_forecast.innerHTML = main;
-
-		// you can create img tags within innerHTML
 		w_icon.innerHTML = `<img src=http://openweathermap.org/img/wn/${icon}@4x.png>`;
-
 		w_temperature.innerHTML = `${temp.toFixed()}&#176`;
 		w_minTem.innerHTML = `Min: ${Math.floor(temp_min)}&#176`;
 		w_maxTem.innerHTML = `Max: ${Math.ceil(temp_max)}&#176`;
@@ -103,7 +96,6 @@ async function getWeatherData() {
 		w_wind.innerHTML = `${speed} m/s`;
 		w_pressure.innerHTML = `${pressure} hPa`;
 	} catch (error) {
-		// Display error message if something goes wrong
 		displayError.innerHTML = error.message || 'Failed to fetch weather data.';
 	}
 }
